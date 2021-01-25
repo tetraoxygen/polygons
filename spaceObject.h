@@ -1,5 +1,5 @@
-const int SCREEN_WIDTH=400;
-const int SCREEN_HEIGHT=400;
+const int SCREEN_WIDTH = 400;
+const int SCREEN_HEIGHT = 400;
 
 struct Point {
 	double x;
@@ -14,18 +14,18 @@ class SpaceObject {
 public:
 	SpaceObject();
 	SpaceObject(SpaceObjType type, double radius, Point location, Point velocity, double angle);
-	//=============================================
-	//mutators
+	// --------------------------- 
+	// Mutators
 	bool setRadius(int radius);
 	bool setLocation(double x, double y);
 	bool setVelocity(double velocityX, double velocityY);
 	bool setAngle(double angDeg);
 
-	//change angle by given amount.
+	// Changes the angle by given amount.
 	void changeAngle(double deltaDeg);
 
-	//============================================
-	//accessors
+	// --------------------------- 
+	// Accessors
 	double getRadius() const;
 	Point getLocation() const;
 	Point getVelocity() const;
@@ -35,10 +35,10 @@ public:
 	//others
 	void updatePosition();
 
-private: 
-	SpaceObjType type;	  //type of object
-	Point location;	  //current location (x,y)
-	Point velocity;	  //current velocity (in pixels/frame)
-	double angleDeg;	  //angle object is facing (in degrees)
-	double radius;        //gross radius of object (for collision detection)
+	private: 
+		SpaceObjType type;	  //type of object
+		Point location;	  //current location (x,y)
+		Point velocity;	  //current velocity (in pixels/frame) (Programmer's note: this seems remarkably naive. The game becomes unplayable on a suitably fast machine. This should be swapped out for pixels/millisecond or something. That still doesn't fix the fact that this will look ugly as sin on Retina displays though.)
+		double angleDeg;	  //angle object is facing (in degrees)
+		double radius;        //gross radius of object (for collision detection)
 };
