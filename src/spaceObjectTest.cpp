@@ -1,4 +1,4 @@
-/** --------------------------------------------------------
+/** --------------------------- 
 * @file		spaceObjectTest.cpp
 * @author	Charlie Welsh
 * @version	1.0
@@ -6,7 +6,7 @@
 * CS162-01 - Assignment 2.1
 *	Tests the SpaceObject class, printing the results to stdout.
 *
-* ------------------------------------------------------------ */
+* --------------------------- */
 
 #include "spaceObject.cpp"
 #include <iostream>

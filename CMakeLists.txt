@@ -4,7 +4,7 @@ set (CMAKE_CXX_STANDARD 11)
 
 project(polygons)
 
-add_executable(polygons spaceObjectTest.cpp)
+add_executable(polygons src/spaceObjectTest.cpp)
 
 install(TARGETS polygons)
 
