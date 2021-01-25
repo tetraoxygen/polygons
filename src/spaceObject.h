@@ -8,6 +8,9 @@
 *
 * --------------------------- */
 
+#ifndef SPACEOBJECT_H
+#define SPACEOBJECT_H
+
 const int SCREEN_WIDTH = 400;
 const int SCREEN_HEIGHT = 400;
 
@@ -115,3 +118,5 @@ class SpaceObject {
 		double angleDeg;	// The angle the object is facing (in degrees)
 		double radius;		// The gross radius of the object (for collision detection)
 };
+
+#endif
