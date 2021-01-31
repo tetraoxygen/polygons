@@ -1,9 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "spaceObject.cpp"
-//#include "spaceObject.h"
 #include "constants.h"
 
-//============================================================================
 int main()
 {
 	//create graphics window
@@ -45,6 +43,8 @@ int main()
 		0
 	);
 
+	
+
 	//game loop
 	while (window.isOpen()) {
 		//handle user input (events and keyboard keys being pressed) ----
@@ -52,27 +52,30 @@ int main()
 		while (window.pollEvent(event))	{
 			if (event.type == sf::Event::Closed)
 				window.close();
+				
+			if (event.type == sf::Event::KeyPressed) {
+				if (event.key.code == sf::Keyboard::A) {
+					ship.changeAngle(-10);
+				}
+				if (event.key.code == sf::Keyboard::D) {
+					ship.changeAngle(10);
+				}
+				if (event.key.code == sf::Keyboard::W) {
+					ship.applyThrust();
+				}
+			}
 		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-			ship.changeAngle(-2); 
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))  
-			ship.changeAngle(2);  
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))  
-			ship.applyThrust();
+		
+		// Update game objects
+		asteroid.updatePosition();
+		asteroid2.updatePosition();
+		ship.updatePosition();
 
-
-		// update game objects ------------------------------------------
-		asteroid.updatePosition(); //uncomment this in step 2.2
-		asteroid2.updatePosition(); //uncomment this in step 2.2
-		ship.updatePosition(); //uncomment this in step 3.2
-
-		// draw new frame ------------------------------------------------
+		// Draw new frame
 		window.clear();
-		asteroid.draw(window);  //uncomment this in step 2.2 !!
-		asteroid2.draw(window);  //uncomment this in step 2.2 !!
-
-		ship.draw(window);  //uncomment this in step 3.2 !!
+		asteroid.draw(window);
+		asteroid2.draw(window);
+		ship.draw(window);
 		window.display();
 	}
 
