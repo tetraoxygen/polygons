@@ -1,0 +1,13 @@
+{
+  "actions" : {
+    "build" : {
+      "enabled" : true,
+      "script" : "#!\/bin\/sh\n\ncd build\nmake"
+    },
+    "run" : {
+      "enabled" : true,
+      "script" : "#!\/bin\/sh\n\ncd build\nmake && .\/polygons"
+    }
+  },
+  "identifier" : "CA8DE205-25ED-4E40-8C10-268ABA59E08E"
+}

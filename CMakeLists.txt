@@ -2,7 +2,13 @@ cmake_minimum_required(VERSION 3.16)
 
 project(polygons)
 
-add_executable(polygons src/spaceObjectTest.cpp)
+set(SFML_DIR "/usr/local/include/lib/cmake/SFML")
+
+find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
+
+add_executable(polygons src/game.cpp)
+
+target_link_libraries(polygons sfml-graphics sfml-audio)
 
 install(TARGETS polygons)
 set_property(TARGET polygons PROPERTY CXX_STANDARD 14)

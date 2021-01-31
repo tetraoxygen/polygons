@@ -11,8 +11,7 @@
 #ifndef SPACEOBJECT_H
 #define SPACEOBJECT_H
 
-const int SCREEN_WIDTH = 400;
-const int SCREEN_HEIGHT = 400;
+#include "constants.h"
 
 struct Point {
 	double x;
@@ -110,6 +109,14 @@ class SpaceObject {
 		* Updates the position of the SpaceObject based on its velocity.
 		*/
 		void updatePosition();
+
+		void draw(sf::RenderWindow& win);
+
+		void drawAsteroid(sf::RenderWindow& win);
+
+		void drawShip(sf::RenderWindow& win);
+		
+		void applyThrust();
 
 	private: 
 		SpaceObjType type;	// The type of the object in space
