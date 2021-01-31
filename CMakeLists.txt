@@ -8,7 +8,7 @@ elseif(APPLE)
 	set(SFML_DIR "/usr/local/include/lib/cmake/SFML")
 endif()
 
-find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
+find_package(SFML 2 COMPONENTS graphics REQUIRED)
 
 add_executable(polygons src/game.cpp)
 
