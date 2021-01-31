@@ -86,6 +86,21 @@ jobs:
           )
         endif()
 
+    - name: Install SFML
+      id: sfml
+      run:  |
+            if [ "$RUNNER_OS" == "Linux" ]; then
+                sudo apt-get install libsfml-dev
+            elif [ "$RUNNER_OS" == "Windows" ]; then
+                choco install sfml
+            elif [ "$RUNNER_OS" == "macOS" ]; then
+                brew install sfml
+            else
+                echo "$RUNNER_OS not supported"
+                exit 1
+            fi
+      shell: bash
+
     - name: Download ccache
       id: ccache
       shell: cmake -P {0}
