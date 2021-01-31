@@ -106,22 +106,41 @@ class SpaceObject {
 		// Others
 		
 		/**
-		* Updates the position of the SpaceObject based on its velocity.
+		*	Updates the position of the SpaceObject based on its velocity.
 		*/
 		void updatePosition();
 
+		/**
+		*	Adds thrust in the direction that the ship is currently facing. 
+		*/
+		void applyThrust();
+
+		/** 
+		*	Draws the SpaceObject on the given window
+		*	
+		*	@param win - the window on which we’ll draw the ship
+		*/
 		void draw(sf::RenderWindow& win);
 
+		/**
+		*	Draws the SpaceObject on the given window as an ASTEROID
+		*	
+		*	@param win - the window on which we’ll draw the ship
+		*/
 		void drawAsteroid(sf::RenderWindow& win);
 
+		/**
+		*	Draws the SpaceObject on the given window as a ship
+		*	
+		* 	@param win - the window on which we’ll draw the ship
+		*/
 		void drawShip(sf::RenderWindow& win);
 		
-		void applyThrust();
 
 	private: 
 		SpaceObjType type;	// The type of the object in space
 		Point location;		// The current location of the object in space (stored as a point)
-		Point velocity;		// The current velocity of the object in space (in pixels/frame) (Programmer's note: this seems remarkably naive. The game becomes unplayable on a suitably fast machine. This should be swapped out for pixels/millisecond or something. That still doesn't fix the fact that this will look ugly as sin on Retina displays though.)
+		Point velocity;		// The current velocity of the object in space (in pixels/frame) (Programmer's note: this seems remarkably naive. The game becomes unplayable on a suitably fast machine (though the frame cap of 60fps solves this, but frame caps are bad, mmkay?). This should be swapped out for pixels/millisecond or something. That still doesn't fix the fact that this will look ugly as sin on Retina displays though. NOTE: I tried it. It does.)
 		double angleDeg;	// The angle the object is facing (in degrees)
 		double radius;		// The gross radius of the object (for collision detection)
 };

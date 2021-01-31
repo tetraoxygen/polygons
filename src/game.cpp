@@ -1,3 +1,13 @@
+/** --------------------------- 
+* @file		game.cpp
+* @author	Charlie Welsh
+* @version	1.0
+*
+* CS162-01 - Assignment 2.1
+*	Runs an actual game of Polygons. SpaceObjects are instantiated here. 
+*
+* --------------------------- */
+
 #include <SFML/Graphics.hpp>
 #include "spaceObject.cpp"
 #include "constants.h"
@@ -22,15 +32,15 @@ int main()
 	);
 	
 	SpaceObject asteroid2(
-	ASTEROID, 
-	60, 
-	Point { 
-		.x = WINDOW_WIDTH / 2 + 100, 
-		.y = WINDOW_HEIGHT / 2 + 100 
-	}, 
-	Point { .x = 2, .y = 4 }, 
-	24
-);
+		ASTEROID, 
+		60, 
+		Point { 
+			.x = WINDOW_WIDTH / 2 + 100, 
+			.y = WINDOW_HEIGHT / 2 + 100 
+		}, 
+		Point { .x = 2, .y = 4 }, 
+		24
+	);
 
 	SpaceObject ship(
 		SHIP, 
@@ -42,9 +52,7 @@ int main()
 		Point { .x = 0, .y = 0 }, 
 		0
 	);
-
 	
-
 	//game loop
 	while (window.isOpen()) {
 		//handle user input (events and keyboard keys being pressed) ----

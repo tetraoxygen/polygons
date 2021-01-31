@@ -11,8 +11,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-const int WINDOW_WIDTH = 1920;
-const int WINDOW_HEIGHT = 1080;
+const int WINDOW_WIDTH = 800;
+const int WINDOW_HEIGHT = 600;
 const float PI = 3.141592654;
 
 #endif

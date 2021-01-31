@@ -9,7 +9,6 @@
 * --------------------------- */
 
 #include "spaceObject.h"
-#include <iostream>
 
 // MARK: - Constructors
 
@@ -121,11 +120,7 @@ void SpaceObject::updatePosition() {
 	this->setLocation((this->velocity.x + this->location.x), (this->velocity.y + this->location.y));
 }
 
-/** --------------------------------------------------------------------------
-*   Draws the spaceobject on the given window
-* 
-* 	@param win - the window on which we’ll draw the ship
----------------------------------------------------------------------------- */
+// --------------------------- 
 void SpaceObject::draw(sf::RenderWindow& win) {
 	if (type==SHIP)
 	drawShip(win);
@@ -133,51 +128,41 @@ void SpaceObject::draw(sf::RenderWindow& win) {
 	drawAsteroid(win);
 }
 
-/** --------------------------------------------------------------------------
-*   Draws the spaceobject on the given window as an asteroid
-* 
-* 	@param win - the window on which we’ll draw the ship
----------------------------------------------------------------------------- */
+// --------------------------- 
 void SpaceObject::drawAsteroid(sf::RenderWindow& win) {
-	//Configure a graphics object to be used for drawing our object
-	//this code draws a simple pentagon.Feel free to modify it if you want.
+	// I repeat myself here a lot, but without dynamic allocation, there's not a better way off the top of my head. 
+	
+	// Configure a graphics object to be used for drawing our object
 	int points= 7;
 	sf::CircleShape shape(radius, points); //radius from our SpaceObject
-		
+	
 	sf::Vector2f midpoint(radius,radius);
 	shape.setOrigin(midpoint);
-		
+	
+	// Thin white lines, look vaguely like a vector CRT. 
 	shape.setFillColor(sf::Color(0, 0, 0)); 
 	shape.setOutlineThickness(1);
 	shape.setOutlineColor(sf::Color(255, 255, 255));
 
-	//apply our object position to the graphics object and draw it
+	// Apply our object position to the graphics object
 	shape.setPosition(location.x, location.y);
 	shape.setRotation(angleDeg);
 
+	// Draw the shape to the window
 	win.draw(shape);
-
-	//Note: if asteroid is near the edge (within a radius) then we should 
-	//draw it again on the other side of the screen so the part off the edge 
-	//shows up immediately on the other edge. Code to do that should be added
-	//here.
 	
-	
-	//Configure a graphics object to be used for drawing our object
-	//this code draws a simple pentagon.Feel free to modify it if you want.
-	//std::cout << location.x << std::endl;
-	if ((WINDOW_WIDTH <= location.x + radius) || (0 >= (location.x - radius)) || (WINDOW_HEIGHT <= location.y + radius) || (0 >= (location.y - radius))) {
-		sf::CircleShape shapeDouble(radius, points); //radius from our SpaceObject
+	// Smooth Wrapping
+	if ((WINDOW_WIDTH <= location.x + radius) || (0 >= (location.x - radius)) || (WINDOW_HEIGHT <= location.y + radius) || (0 >= (location.y - radius))) { // This is more of a bounding box than a radius, but that's probably for the best. 
 		
+		// Create a clone of the above CircleShape
+		sf::CircleShape shapeDouble(radius, points);
 		shapeDouble.setOrigin(midpoint);
-			
 		shapeDouble.setFillColor(sf::Color(0, 0, 0)); 
 		shapeDouble.setOutlineThickness(1);
 		shapeDouble.setOutlineColor(sf::Color(255, 255, 255));
-		
 		shapeDouble.setRotation(angleDeg);
-
 		shapeDouble.setPosition(location.x, location.y);
+
 		// X
 		if (WINDOW_WIDTH <= location.x + radius) {
 			shapeDouble.setPosition(shapeDouble.getPosition().x - WINDOW_WIDTH, shapeDouble.getPosition().y);
@@ -193,18 +178,15 @@ void SpaceObject::drawAsteroid(sf::RenderWindow& win) {
 		if (0 >= (location.y - radius)) {
 			shapeDouble.setPosition(shapeDouble.getPosition().x, shapeDouble.getPosition().y + WINDOW_HEIGHT);
 		}
+		
 		win.draw(shapeDouble);
 	}
 	
 }
 
-/** --------------------------------------------------------------------------
-*   Draws the spaceobject on the given window as a ship
-* 
-* 	@param win - the window on which we’ll draw the ship
----------------------------------------------------------------------------- */
+// --------------------------- 
 void SpaceObject::drawShip(sf::RenderWindow& win) {
-	// draw ship
+	// Draw ship
 	sf::ConvexShape shipShape;
 	shipShape.setPointCount(3);
 	shipShape.setPoint(0, sf::Vector2f(10, 0));
@@ -223,7 +205,7 @@ void SpaceObject::drawShip(sf::RenderWindow& win) {
 	win.draw(shipShape);
 }
 
-
+// --------------------------- 
 void SpaceObject::applyThrust() {
 	double engineThrust = 0.05;
 	double forcex = cos((angleDeg-90)*PI/180) * engineThrust;
