@@ -2,7 +2,11 @@ cmake_minimum_required(VERSION 3.16)
 
 project(polygons)
 
-# set(SFML_DIR "/usr/local/include/lib/cmake/SFML")
+if(LINUX)
+	set(SFML_DIR "/usr/include/SFML/")
+elseif(APPLE)
+	set(SFML_DIR "/usr/local/include/lib/cmake/SFML")
+endif()
 
 find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
 
