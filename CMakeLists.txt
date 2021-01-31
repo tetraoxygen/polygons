@@ -4,7 +4,7 @@ project(polygons)
 
 set(SFML_DIR "/usr/local/include/lib/cmake/SFML")
 
-find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
+find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
 
 add_executable(polygons src/game.cpp)
 
