@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project(polygons)
 
 if(LINUX)
-	set(SFML_DIR "/usr/include/SFML/")
+	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/usr/share/SFML/cmake/Modules/")
 elseif(APPLE)
 	set(SFML_DIR "/usr/local/include/lib/cmake/SFML")
 endif()
