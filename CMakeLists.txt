@@ -2,12 +2,6 @@ cmake_minimum_required(VERSION 3.16)
 
 project(polygons)
 
-if(LINUX)
-	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/usr/share/SFML/cmake/Modules/")
-elseif(APPLE)
-	set(SFML_DIR "/usr/local/include/lib/cmake/SFML")
-endif()
-
 find_package(SFML 2 COMPONENTS graphics REQUIRED)
 
 add_executable(polygons src/game.cpp)

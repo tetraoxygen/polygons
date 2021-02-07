@@ -9,11 +9,15 @@
 * --------------------------- */
 
 #include <SFML/Graphics.hpp>
+#include <cmath>
+#include <iostream>
 #include "spaceObject.cpp"
 #include "constants.h"
 
 Point getRandomPosition();
 Point getRandomVelocity();
+
+bool objectsIntersect(SpaceObject *object1, SpaceObject *object2);
 
 int main()
 {
@@ -77,6 +81,15 @@ int main()
 				asteroids[i]->updatePosition();
 			}
 		}
+		
+		for (int i = 0; i < MAX_ASTEROIDS; i++) {
+			// check if the asteroid is not null
+			if (asteroids[i]) {
+				if (objectsIntersect(asteroids[i], ship) == true) {
+					std::cout << "Crash!" << std::endl;
+				}
+			}
+		}
 
 		// Draw new frame
 		window.clear();
@@ -119,4 +132,25 @@ Point getRandomVelocity() {
 	y = y / 127.0;
 	
 	return Point { .x = x, .y = y };	
+}
+
+bool objectsIntersect(SpaceObject *object1, SpaceObject *object2) {
+	Point firstLocation = object1->getLocation();
+	Point secondLocation = object2->getLocation();
+	
+	double firstRadius = object1->getRadius();
+	double secondRadius = object2->getRadius();
+	
+	double radiiSum = firstRadius + secondRadius;
+	
+	double xDistance = abs(firstLocation.x - secondLocation.x);
+	double yDistance = abs(firstLocation.y - secondLocation.y);
+
+	double totalDistance = sqrt((xDistance * xDistance) + (yDistance * yDistance));
+		
+	if (totalDistance > radiiSum) {
+		return false;
+	} else {
+		return true;
+	}
 }
