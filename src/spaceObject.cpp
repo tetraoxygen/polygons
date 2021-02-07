@@ -130,7 +130,6 @@ void SpaceObject::draw(sf::RenderWindow& win) {
 
 // --------------------------- 
 void SpaceObject::drawAsteroid(sf::RenderWindow& win) {
-	// I repeat myself here a lot, but without dynamic allocation, there's not a better way off the top of my head. 
 	
 	// Configure a graphics object to be used for drawing our object
 	int points= 7;

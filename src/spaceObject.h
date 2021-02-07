@@ -35,7 +35,7 @@ class SpaceObject {
 		* 	@param radius - the radius of the object (defaults to 20 if given parameter is invalid)
 		* 	@param position - the position of the object (defaults to (0, 0) if the input is invalid. If the input is out of bounds, it's wrapped around the screen until it's back on screen)
 		* 	@param velocity - the velocity of the object (defaults to (0, 0) if the input is invalid.)
-		* 	@param type - the angle of the object (defaults to 0° if input is invalid.)
+		* 	@param angle - the angle of the object (defaults to 0° if input is invalid.)
 		*/
 		SpaceObject(SpaceObjType type, double radius, Point location, Point velocity, double angle);
 		// --------------------------- 
