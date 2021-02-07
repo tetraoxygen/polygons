@@ -12,8 +12,8 @@
 #define CONSTANTS_H
 
 // Game constants
-const int WINDOW_WIDTH = 800;
-const int WINDOW_HEIGHT = 600;
+const int WINDOW_WIDTH = 1600;
+const int WINDOW_HEIGHT = 900;
 const int MAX_ASTEROIDS = 20;
 
 // Utility constants

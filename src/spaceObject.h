@@ -12,13 +12,14 @@
 #define SPACEOBJECT_H
 
 #include "constants.h"
+#include <SFML/Graphics.hpp>
 
 struct Point {
 	double x;
 	double y;
 };
 
-enum SpaceObjType { SHIP, ASTEROID, PHOTON_TORPEDO }; 
+enum SpaceObjType { SHIP, ASTEROID, PHOTON_TORPEDO, SHIP_EXPLODING, SHIP_GONE }; 
 
 
 class SpaceObject {
@@ -37,7 +38,7 @@ class SpaceObject {
 		* 	@param velocity - the velocity of the object (defaults to (0, 0) if the input is invalid.)
 		* 	@param angle - the angle of the object (defaults to 0° if input is invalid.)
 		*/
-		SpaceObject(SpaceObjType type, double radius, Point location, Point velocity, double angle);
+		SpaceObject(SpaceObjType type, double radius, Point position, Point velocity, double angle);
 		// --------------------------- 
 		// Mutators
 		
@@ -50,12 +51,12 @@ class SpaceObject {
 		bool setRadius(int radius);
 		
 		/**
-		* Sets the location of a SpaceObject.
-		*	@param x - the x coordinate of the new location
-		*	@param y - the y coordinate of the new location
+		* Sets the position of a SpaceObject.
+		*	@param x - the x coordinate of the new position
+		*	@param y - the y coordinate of the new position
 		*	@return true upon completion
 		*/
-		bool setLocation(double x, double y);
+		bool setPosition(double x, double y);
 		
 		/**
 		* Sets the velocity of a SpaceObject. If the input is out of bounds, it's wrapped around the screen until it's back in bounds
@@ -87,10 +88,10 @@ class SpaceObject {
 		*/
 		double getRadius() const;
 		/**
-		* Returns the location of the SpaceObject
-		*	@return the location (Point) of the SpaceObject
+		* Returns the position of the SpaceObject
+		*	@return the position (Point) of the SpaceObject
 		*/
-		Point getLocation() const;
+		Point getPosition() const;
 		/**
 		* Returns the velocity of the SpaceObject
 		*	@return the velocity (Point) of the SpaceObject
@@ -102,6 +103,14 @@ class SpaceObject {
 		*/
 		double getAngle() const;
 	
+		/**
+		* Returns the type of the SpaceObject
+		*	@return the type (enum SpaceObjType) of the SpaceObject
+		*/
+		SpaceObjType getType() const;
+		
+		bool isInCenter() const;
+		
 		// --------------------------- 
 		// Others
 		
@@ -114,6 +123,11 @@ class SpaceObject {
 		*	Adds thrust in the direction that the ship is currently facing. 
 		*/
 		void applyThrust();
+		
+		/**
+		*	Sets the ship's type to SHIP_EXPLODING, and sets the ship's velocity to 0.
+		*/
+		void explode();
 
 		/** 
 		*	Draws the SpaceObject on the given window
@@ -136,10 +150,16 @@ class SpaceObject {
 		*/
 		void drawShip(sf::RenderWindow& win);
 		
+		/**
+		*	Draws the SpaceObject on the given window as an explosion
+		*	
+		* 	@param win - the window on which we’ll draw the exploding ship
+		*/
+		void drawExplodingShip(sf::RenderWindow& win);
 
 	private: 
 		SpaceObjType type;	// The type of the object in space
-		Point location;		// The current location of the object in space (stored as a point)
+		Point position;		// The current position of the object in space (stored as a point)
 		Point velocity;		// The current velocity of the object in space (in pixels/frame) (Programmer's note: this seems remarkably naive. The game becomes unplayable on a suitably fast machine (though the frame cap of 60fps solves this, but frame caps are bad, mmkay?). This should be swapped out for pixels/millisecond or something. That still doesn't fix the fact that this will look ugly as sin on Retina displays though. NOTE: I tried it. It does.)
 		double angleDeg;	// The angle the object is facing (in degrees)
 		double radius;		// The gross radius of the object (for collision detection)

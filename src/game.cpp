@@ -9,7 +9,6 @@
 * --------------------------- */
 
 #include <SFML/Graphics.hpp>
-#include <cmath>
 #include <iostream>
 #include "spaceObject.cpp"
 #include "constants.h"
@@ -33,14 +32,14 @@ int main()
 		SHIP, 
 		40, 
 		Point { 
-			.x = WINDOW_WIDTH / 2, 
-			.y = WINDOW_HEIGHT / 2 
+			.x = WINDOW_WIDTH / 2.0, 
+			.y = WINDOW_HEIGHT / 2.0 
 		}, 
 		Point { .x = 0, .y = 0 }, 
 		0
 	);
 	
-	srand(42);
+	srand(1238972139);
 	
 	for ( int i = 0; i < 5; i++) {
 		asteroids[i] = new SpaceObject(
@@ -48,7 +47,7 @@ int main()
 			60,
 			getRandomPosition(),
 			getRandomVelocity(),
-			0
+			(rand() % 360)
 		);
 	}
 	
@@ -75,21 +74,33 @@ int main()
 		
 		// Update game objects
 		ship->updatePosition();
+		bool objectsInCenter = false;
 		for (int i = 0; i < MAX_ASTEROIDS; i++) {
 			// check if the asteroid is not null
 			if (asteroids[i]) {
 				asteroids[i]->updatePosition();
-			}
-		}
-		
-		for (int i = 0; i < MAX_ASTEROIDS; i++) {
-			// check if the asteroid is not null
-			if (asteroids[i]) {
-				if (objectsIntersect(asteroids[i], ship) == true) {
-					std::cout << "Crash!" << std::endl;
+				if (objectsIntersect(asteroids[i], ship) == true && ship->getType() == SHIP) {
+					ship->explode();
 				}
+				if (asteroids[i]->isInCenter()) objectsInCenter = true;
 			}
 		}
+		if (!objectsInCenter && ship->getType() == SHIP_GONE) {
+			// delete the pointer to avoid a memory leak.
+			delete ship;
+			ship =  new SpaceObject(
+				SHIP, 
+				40, 
+				Point { 
+					.x = WINDOW_WIDTH / 2.0, 
+					.y = WINDOW_HEIGHT / 2.0 
+				}, 
+				Point { .x = 0, .y = 0 }, 
+				0
+			);
+		}
+
+		
 
 		// Draw new frame
 		window.clear();
@@ -110,7 +121,26 @@ Point getRandomPosition() {
 	double x = rand() % WINDOW_WIDTH;
 	double y = rand() % WINDOW_HEIGHT;
 	
-	Point result = Point { .x = x, .y = y };
+	// moving the result if it's too close to the center (within 200 pixels)
+	
+	// X
+	if (((WINDOW_WIDTH / 2.0) + 100) < x && ((WINDOW_WIDTH / 2.0) - 100) > x) {
+		if (rand() % 2) {
+			x = x - 200;
+		} else {
+			x = x + 200;
+		}
+	}
+	
+	// Y
+	if (((WINDOW_WIDTH / 2.0) + 100) < y && ((WINDOW_WIDTH / 2.0) - 100) > y) {
+		if (rand() % 2) {
+			x = x - 200;
+		} else {
+			x = x + 200;
+		}
+	}
+	
 	return Point { .x = x, .y = y };	
 }
 
@@ -135,22 +165,19 @@ Point getRandomVelocity() {
 }
 
 bool objectsIntersect(SpaceObject *object1, SpaceObject *object2) {
-	Point firstLocation = object1->getLocation();
-	Point secondLocation = object2->getLocation();
+	Point firstPosition = object1->getPosition();
+	Point secondPosition = object2->getPosition();
 	
 	double firstRadius = object1->getRadius();
 	double secondRadius = object2->getRadius();
 	
 	double radiiSum = firstRadius + secondRadius;
 	
-	double xDistance = abs(firstLocation.x - secondLocation.x);
-	double yDistance = abs(firstLocation.y - secondLocation.y);
+	double xDistance = abs(firstPosition.x - secondPosition.x);
+	double yDistance = abs(firstPosition.y - secondPosition.y);
 
 	double totalDistance = sqrt((xDistance * xDistance) + (yDistance * yDistance));
 		
-	if (totalDistance > radiiSum) {
-		return false;
-	} else {
-		return true;
-	}
+	return radiiSum > totalDistance;
 }
+

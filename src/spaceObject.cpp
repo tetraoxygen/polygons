@@ -9,6 +9,7 @@
 * --------------------------- */
 
 #include "spaceObject.h"
+#include <cmath>
 
 // MARK: - Constructors
 
@@ -16,21 +17,21 @@
 SpaceObject::SpaceObject() {
 	type = ASTEROID;
 	radius = 20;
-	location = { .x = WINDOW_WIDTH / 2, .y = WINDOW_HEIGHT / 2 };
-	velocity = { .x = WINDOW_WIDTH / 2, .y = WINDOW_HEIGHT / 2 };
+	position = { .x = WINDOW_WIDTH / 2.0, .y = WINDOW_HEIGHT / 2.0 };
+	velocity = { .x = WINDOW_WIDTH / 2.0, .y = WINDOW_HEIGHT / 2.0 };
 	angleDeg = 0;
 };
 
 // --------------------------- 
-SpaceObject::SpaceObject(SpaceObjType type, double radius, Point location, Point velocity, double angle) {
+SpaceObject::SpaceObject(SpaceObjType type, double radius, Point position, Point velocity, double angle) {
 	this->type = type;
 	this->radius = 20;
-	this->location = { .x = WINDOW_WIDTH / 2, .y = WINDOW_HEIGHT / 2 };
-	this->velocity = { .x = WINDOW_WIDTH / 2, .y = WINDOW_HEIGHT / 2 };
+	this->position = { .x = WINDOW_WIDTH / 2.0, .y = WINDOW_HEIGHT / 2.0 };
+	this->velocity = { .x = WINDOW_WIDTH / 2.0, .y = WINDOW_HEIGHT / 2.0 };
 	this->angleDeg = 0;
 	
 	this->setRadius(radius);
-	this->setLocation(location.x, location.y);
+	this->setPosition(position.x, position.y);
 	this->setVelocity(velocity.x, velocity.y);
 	this->setAngle(angle);
 };
@@ -48,7 +49,7 @@ bool SpaceObject::setRadius(int radius) {
 }
 
 // --------------------------- 
-bool SpaceObject::setLocation(double x, double y) {
+bool SpaceObject::setPosition(double x, double y) {
 	while (x < 0) {
 		x = x + WINDOW_WIDTH;
 	}
@@ -57,7 +58,7 @@ bool SpaceObject::setLocation(double x, double y) {
 		x = x - WINDOW_WIDTH;
 	}
 	
-	this->location.x = x;
+	this->position.x = x;
 	
 	while (y < 0) {
 		y = y + WINDOW_HEIGHT;
@@ -67,7 +68,7 @@ bool SpaceObject::setLocation(double x, double y) {
 		y = y - WINDOW_HEIGHT;
 	}
 	
-	this->location.y = y;
+	this->position.y = y;
 
 	return true;
 }
@@ -88,7 +89,9 @@ bool SpaceObject::setAngle(double angDeg) {
 
 // --------------------------- 
 void SpaceObject::changeAngle(double deltaDeg) {
-	this->setAngle(this->angleDeg + deltaDeg);
+	if (type == SHIP) {
+		this->setAngle(this->angleDeg + deltaDeg);
+	}
 }
 
 // MARK: - Accessors
@@ -99,8 +102,8 @@ double SpaceObject::getRadius() const {
 }
 
 // --------------------------- 
-Point SpaceObject::getLocation() const {
-	return location;
+Point SpaceObject::getPosition() const {
+	return position;
 }
 
 // --------------------------- 
@@ -113,24 +116,62 @@ double SpaceObject::getAngle() const {
 	return angleDeg;
 }
 
+// --------------------------- 
+SpaceObjType SpaceObject::getType() const {
+	return type;
+}
+
+bool SpaceObject::isInCenter() const {
+	Point centerPosition = Point { .x = WINDOW_WIDTH / 2.0, .y = WINDOW_HEIGHT / 2.0 };
+	double centerRadius = 100;
+	
+	double radiiSum = centerRadius + radius;
+	
+	double xDistance = abs(position.x - centerPosition.x);
+	double yDistance = abs(position.y - centerPosition.y);
+
+	double totalDistance = sqrt((xDistance * xDistance) + (yDistance * yDistance));
+		
+	return radiiSum > totalDistance;
+}
+
 // MARK: - Others
 
 // --------------------------- 
 void SpaceObject::updatePosition() {
-	this->setLocation((this->velocity.x + this->location.x), (this->velocity.y + this->location.y));
+	this->setPosition((this->velocity.x + this->position.x), (this->velocity.y + this->position.y));
+}
+
+// --------------------------- 
+void SpaceObject::applyThrust() {
+	if (type == SHIP) {
+		double engineThrust = 0.2;
+		double forceX = cos((angleDeg-90)*PI/180) * engineThrust;
+		double forceY = sin((angleDeg-90)*PI/180) * engineThrust;
+		velocity.x = velocity.x + forceX; 
+		velocity.y = velocity.y + forceY;
+	}
+}
+
+// --------------------------- 
+void SpaceObject::explode() {
+	this->setVelocity(0, 0);
+	this->type = SHIP_EXPLODING;
 }
 
 // --------------------------- 
 void SpaceObject::draw(sf::RenderWindow& win) {
-	if (type==SHIP)
-	drawShip(win);
-	else 
-	drawAsteroid(win);
+	if (type==SHIP) {
+		drawShip(win);
+	} else if (type == SHIP_EXPLODING) {
+		drawExplodingShip(win);
+	} else {
+		drawAsteroid(win);
+	}
 }
 
 // --------------------------- 
 void SpaceObject::drawAsteroid(sf::RenderWindow& win) {
-	
 	// Configure a graphics object to be used for drawing our object
 	int points= 7;
 	sf::CircleShape shape(radius, points); //radius from our SpaceObject
@@ -138,20 +179,20 @@ void SpaceObject::drawAsteroid(sf::RenderWindow& win) {
 	sf::Vector2f midpoint(radius,radius);
 	shape.setOrigin(midpoint);
 	
-	// Thin white lines, look vaguely like a vector CRT. 
+	// Thin white lines, which look vaguely like a vector CRT. 
 	shape.setFillColor(sf::Color(0, 0, 0)); 
 	shape.setOutlineThickness(1);
 	shape.setOutlineColor(sf::Color(255, 255, 255));
 
 	// Apply our object position to the graphics object
-	shape.setPosition(location.x, location.y);
+	shape.setPosition(position.x, position.y);
 	shape.setRotation(angleDeg);
 
 	// Draw the shape to the window
 	win.draw(shape);
 	
 	// Smooth Wrapping
-	if ((WINDOW_WIDTH <= location.x + radius) || (0 >= (location.x - radius)) || (WINDOW_HEIGHT <= location.y + radius) || (0 >= (location.y - radius))) { // This is more of a bounding box than a radius, but that's probably for the best. 
+	if ((WINDOW_WIDTH <= position.x + radius) || (0 >= (position.x - radius)) || (WINDOW_HEIGHT <= position.y + radius) || (0 >= (position.y - radius))) { // This is more of a bounding box than a radius, but that's probably for the best. 
 		
 		// Create a clone of the above CircleShape
 		sf::CircleShape shapeDouble(radius, points);
@@ -160,21 +201,21 @@ void SpaceObject::drawAsteroid(sf::RenderWindow& win) {
 		shapeDouble.setOutlineThickness(1);
 		shapeDouble.setOutlineColor(sf::Color(255, 255, 255));
 		shapeDouble.setRotation(angleDeg);
-		shapeDouble.setPosition(location.x, location.y);
+		shapeDouble.setPosition(position.x, position.y);
 
 		// X
-		if (WINDOW_WIDTH <= location.x + radius) {
+		if (WINDOW_WIDTH <= position.x + radius) {
 			shapeDouble.setPosition(shapeDouble.getPosition().x - WINDOW_WIDTH, shapeDouble.getPosition().y);
 		}
-		if (0 >= (location.x - radius)) {
+		if (0 >= (position.x - radius)) {
 			shapeDouble.setPosition(shapeDouble.getPosition().x + WINDOW_WIDTH, shapeDouble.getPosition().y);
 		}
 		
 		// Y
-		if ((WINDOW_HEIGHT <= location.y + radius)) {
+		if ((WINDOW_HEIGHT <= position.y + radius)) {
 			shapeDouble.setPosition(shapeDouble.getPosition().x, shapeDouble.getPosition().y - WINDOW_HEIGHT);
 		}
-		if (0 >= (location.y - radius)) {
+		if (0 >= (position.y - radius)) {
 			shapeDouble.setPosition(shapeDouble.getPosition().x, shapeDouble.getPosition().y + WINDOW_HEIGHT);
 		}
 		
@@ -185,30 +226,56 @@ void SpaceObject::drawAsteroid(sf::RenderWindow& win) {
 
 // --------------------------- 
 void SpaceObject::drawShip(sf::RenderWindow& win) {
-	// Draw ship
-	sf::ConvexShape shipShape;
-	shipShape.setPointCount(3);
-	shipShape.setPoint(0, sf::Vector2f(10, 0));
-	shipShape.setPoint(1, sf::Vector2f(0, 25));
-	shipShape.setPoint(2, sf::Vector2f(20, 25));
-
-	sf::Vector2f midpoint(10,15);
-	shipShape.setOrigin(midpoint);
-
-	shipShape.setFillColor(sf::Color(0, 0, 0));
-	shipShape.setOutlineThickness(1);
-	shipShape.setOutlineColor(sf::Color(255, 255, 255));
-
-	shipShape.setPosition(location.x, location.y);
-	shipShape.setRotation(angleDeg);
-	win.draw(shipShape);
+	if (type == SHIP){
+		// Draw ship
+		sf::ConvexShape shipShape;
+		shipShape.setPointCount(3);
+		shipShape.setPoint(0, sf::Vector2f(10, 0));
+		shipShape.setPoint(1, sf::Vector2f(0, 25));
+		shipShape.setPoint(2, sf::Vector2f(20, 25));
+	
+		sf::Vector2f midpoint(10,15);
+		shipShape.setOrigin(midpoint);
+	
+		shipShape.setFillColor(sf::Color(0, 0, 0));
+		shipShape.setOutlineThickness(1);
+		shipShape.setOutlineColor(sf::Color(255, 255, 255));
+	
+		shipShape.setPosition(position.x, position.y);
+		shipShape.setRotation(angleDeg);
+		win.draw(shipShape);
+	} else if (type == SHIP_EXPLODING) {
+		drawExplodingShip(win);
+	}
 }
 
 // --------------------------- 
-void SpaceObject::applyThrust() {
-	double engineThrust = 0.05;
-	double forcex = cos((angleDeg-90)*PI/180) * engineThrust;
-	double forcey = sin((angleDeg-90)*PI/180) * engineThrust;
-	velocity.x = velocity.x + forcex; 
-	velocity.y = velocity.y + forcey;
+void SpaceObject::drawExplodingShip(sf::RenderWindow& win) {
+	if (type != SHIP_GONE){
+		// Configure a graphics object to be used for drawing our object
+		int points = 64;
+		sf::CircleShape shape(radius, points); //radius from our SpaceObject
+		
+		sf::Vector2f midpoint(radius,radius);
+		shape.setOrigin(midpoint);
+		
+		// Thin white lines, which look vaguely like a vector CRT. 
+		shape.setFillColor(sf::Color(0, 0, 0)); 
+		shape.setOutlineThickness(1);
+		shape.setOutlineColor(sf::Color(255, 255, 255));
+	
+		// Apply our object position to the graphics object
+		shape.setPosition(position.x, position.y);
+		shape.setRotation(angleDeg);
+	
+		// Draw the shape to the window
+		win.draw(shape);
+		
+		// Expand the circle.
+		setRadius(getRadius() + 2);
+		
+		if (radius >= 80) {
+			type = SHIP_GONE;
+		}
+	}
 }
