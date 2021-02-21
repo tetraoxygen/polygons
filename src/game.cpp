@@ -146,7 +146,14 @@ int main() {
 		for (int i = 0; i < MAX_PHOTONS; i++) {
 			// check if the photon is not null
 			if (photons[i]) {
-				photons[i]->updatePosition();
+				// Check if the photon torpedo has reached its end of life, and delete it if it's reached EOL
+				if (photons[i]->getTimesDrawn() >= PHOTON_LIFESPAN) {
+					delete photons[i];
+					photons[i] = 0;
+				// Otherwise, update its position
+				} else {
+					photons[i]->updatePosition();
+				}
 			}
 		}
 		

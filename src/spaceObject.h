@@ -109,6 +109,16 @@ class SpaceObject {
 		*/
 		SpaceObjType getType() const;
 		
+		/**
+		* Returns the number of times that the object has been drawn
+		*	@return the number of times that the object has been drawn (int)
+		*/
+		int getTimesDrawn() const;
+		
+		/**
+		* Returns if an object is within the immediate vicinity of the center of the screen
+		*	@return true if the object is in the center of the screen
+		*/
 		bool isInCenter() const;
 		
 		// --------------------------- 
@@ -156,13 +166,38 @@ class SpaceObject {
 		* 	@param win - the window on which we’ll draw the exploding ship
 		*/
 		void drawExplodingShip(sf::RenderWindow& win);
+		
 
 	private: 
-		SpaceObjType type;	// The type of the object in space
-		Point position;		// The current position of the object in space (stored as a point)
-		Point velocity;		// The current velocity of the object in space (in pixels/frame) (Programmer's note: this seems remarkably naive. The game becomes unplayable on a suitably fast machine (though the frame cap of 60fps solves this, but frame caps are bad, mmkay?). This should be swapped out for pixels/millisecond or something. That still doesn't fix the fact that this will look ugly as sin on Retina displays though. NOTE: I tried it. It does.)
-		double angleDeg;	// The angle the object is facing (in degrees)
-		double radius;		// The gross radius of the object (for collision detection)
+		/**
+		*	The type of the object in space
+		*/
+		SpaceObjType type;
+		
+		/**
+		*	The current position of the object in space (stored as a point)
+		*/
+		Point position;
+		
+		/**
+		*	The current velocity of the object in space (in pixels/frame)
+		*/
+		Point velocity;
+		
+		/**
+		*	The angle the object is facing (in degrees)
+		*/
+		double angleDeg;
+		
+		/**
+		*	The gross radius of the object (for collision detection)
+		*/
+		double radius;
+		
+		/**
+		*	The number of times the object has been drawn
+		*/
+		int timesDrawn = 0;
 };
 
 #endif

@@ -121,6 +121,12 @@ SpaceObjType SpaceObject::getType() const {
 	return type;
 }
 
+// --------------------------- 
+int SpaceObject::getTimesDrawn() const {
+	return timesDrawn;
+}
+
+// --------------------------- 
 bool SpaceObject::isInCenter() const {
 	Point centerPosition = Point { .x = WINDOW_WIDTH / 2.0, .y = WINDOW_HEIGHT / 2.0 };
 	double centerRadius = 100;
@@ -166,6 +172,8 @@ void SpaceObject::draw(sf::RenderWindow& win) {
 	} else if (type == ASTEROID || type == PHOTON_TORPEDO){
 		drawAsteroid(win);
 	}
+	// Note that this has been drawn
+	this->timesDrawn++;
 }
 
 // --------------------------- 
