@@ -24,6 +24,7 @@ int main() {
 	bool leftPressed = false;
 	bool rightPressed = false;
 	bool thrustPressed = false;
+	bool firePressed = false;
 	
 	//create graphics window
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Polygons!", sf::Style::Titlebar | sf::Style::Close);
@@ -32,6 +33,8 @@ int main() {
 	//create SpaceObjects
 	
 	SpaceObject *asteroids[MAX_ASTEROIDS] = {};
+	
+	SpaceObject *photons[MAX_PHOTONS] = {};
 	
 	SpaceObject *ship = new SpaceObject(
 		SHIP, 
@@ -74,6 +77,9 @@ int main() {
 				if (event.key.code == sf::Keyboard::W) {
 					thrustPressed = true;
 				}
+				if (event.key.code == sf::Keyboard::Space) {
+					firePressed = true;
+				}
 			}
 			
 			if (event.type == sf::Event::KeyReleased) {
@@ -85,6 +91,9 @@ int main() {
 				}
 				if (event.key.code == sf::Keyboard::W) {
 					thrustPressed = false;
+				}
+				if (event.key.code == sf::Keyboard::Space) {
+					firePressed = false;
 				}
 			}
 		}
@@ -99,9 +108,29 @@ int main() {
 		if (thrustPressed) {
 			ship->applyThrust(0.04);
 		}
+		if (firePressed) {
+			int i = 0;
+			while (photons[i] != nullptr) {
+				i++;
+			}
+			// Make sure we're not creating too many photons (that goes into the asteroids[] memory because C+++ isn't memory safe)
+			if (i < MAX_PHOTONS) {
+				photons[i] = new SpaceObject(
+					PHOTON_TORPEDO,
+					2,
+					ship->getPosition(),
+					ship->getVelocity(),
+					ship->getAngle()
+				);
+				std::cout << "Photon velocity (before applying thrust): " << photons[i]->getVelocity().x << ", " << photons[i]->getVelocity().y << std::endl;
+				photons[i]->applyThrust(5);
+				std::cout << "Photon velocity (after applying thrust): " << photons[i]->getVelocity().x << ", " << photons[i]->getVelocity().y << std::endl;
+			}
+		}
 		
 		// Update game objects
 		ship->updatePosition();
+		
 		bool objectsInCenter = false;
 		for (int i = 0; i < MAX_ASTEROIDS; i++) {
 			// check if the asteroid is not null
@@ -113,6 +142,14 @@ int main() {
 				if (asteroids[i]->isInCenter()) objectsInCenter = true;
 			}
 		}
+		
+		for (int i = 0; i < MAX_PHOTONS; i++) {
+			// check if the photon is not null
+			if (photons[i]) {
+				photons[i]->updatePosition();
+			}
+		}
+		
 		if (!objectsInCenter && ship->getType() == SHIP_GONE) {
 			// delete the pointer to avoid a memory leak. We're not setting the pointer to NULL, because we set it to a new SpaceObject immediately after.
 			delete ship;
@@ -139,6 +176,13 @@ int main() {
 				asteroids[i]->draw(window);
 			}
 		}
+		for (int i = 0; i < MAX_PHOTONS; i++) {
+			// check if the asteroid is not null
+			if (photons[i]) {
+				photons[i]->draw(window);
+			}
+		}
+		
 		window.display();
 	}
 

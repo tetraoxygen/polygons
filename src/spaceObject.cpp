@@ -144,12 +144,10 @@ void SpaceObject::updatePosition() {
 
 // --------------------------- 
 void SpaceObject::applyThrust(double thrustVector) {
-	if (type == SHIP) {
-		double forceX = cos((angleDeg-90)*PI/180) * thrustVector;
-		double forceY = sin((angleDeg-90)*PI/180) * thrustVector;
-		velocity.x = velocity.x + forceX; 
-		velocity.y = velocity.y + forceY;
-	}
+	double forceX = cos((angleDeg-90)*PI/180) * thrustVector;
+	double forceY = sin((angleDeg-90)*PI/180) * thrustVector;
+	velocity.x = velocity.x + forceX; 
+	velocity.y = velocity.y + forceY;
 }
 
 // --------------------------- 
@@ -164,7 +162,8 @@ void SpaceObject::draw(sf::RenderWindow& win) {
 		drawShip(win);
 	} else if (type == SHIP_EXPLODING) {
 		drawExplodingShip(win);
-	} else if (type == ASTEROID){
+	// TODO: PHOTON_TORPEDO check is just for debugging
+	} else if (type == ASTEROID || type == PHOTON_TORPEDO){
 		drawAsteroid(win);
 	}
 }

@@ -15,6 +15,7 @@
 const int WINDOW_WIDTH = 1600;
 const int WINDOW_HEIGHT = 900;
 const int MAX_ASTEROIDS = 20;
+const int MAX_PHOTONS = 10;
 
 // Utility constants
 const float PI = 3.141592654;
