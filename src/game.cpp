@@ -18,8 +18,13 @@ Point getRandomVelocity();
 
 bool objectsIntersect(SpaceObject *object1, SpaceObject *object2);
 
-int main()
-{
+int main() {
+
+	// Booleans for simultaneous movement (left/right, thrust, and torpedoes should all work at the same time)
+	bool leftPressed = false;
+	bool rightPressed = false;
+	bool thrustPressed = false;
+	
 	//create graphics window
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Polygons!", sf::Style::Titlebar | sf::Style::Close);
 	window.setFramerateLimit(60); 
@@ -53,7 +58,7 @@ int main()
 	
 	//game loop
 	while (window.isOpen()) {
-		//handle user input (events and keyboard keys being pressed) ----
+		// Handle user input (events and keyboard keys being pressed) ----
 		sf::Event event;
 		while (window.pollEvent(event))	{
 			if (event.type == sf::Event::Closed)
@@ -61,15 +66,38 @@ int main()
 				
 			if (event.type == sf::Event::KeyPressed) {
 				if (event.key.code == sf::Keyboard::A) {
-					ship->changeAngle(-10);
+					leftPressed = true;
 				}
 				if (event.key.code == sf::Keyboard::D) {
-					ship->changeAngle(10);
+					rightPressed = true;
 				}
 				if (event.key.code == sf::Keyboard::W) {
-					ship->applyThrust(0.2);
+					thrustPressed = true;
 				}
 			}
+			
+			if (event.type == sf::Event::KeyReleased) {
+				if (event.key.code == sf::Keyboard::A) {
+					leftPressed = false;
+				}
+				if (event.key.code == sf::Keyboard::D) {
+					rightPressed = false;
+				}
+				if (event.key.code == sf::Keyboard::W) {
+					thrustPressed = false;
+				}
+			}
+		}
+		
+		// Update objects in response to user input
+		if (leftPressed) {
+			ship->changeAngle(-1.75);
+		}
+		if (rightPressed) {
+			ship->changeAngle(1.75);
+		}
+		if (thrustPressed) {
+			ship->applyThrust(0.04);
 		}
 		
 		// Update game objects

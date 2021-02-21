@@ -271,7 +271,7 @@ void SpaceObject::drawExplodingShip(sf::RenderWindow& win) {
 		win.draw(shape);
 		
 		// Expand the circle.
-		setRadius(getRadius() + 2);
+		setRadius(getRadius() + 1.5);
 		
 		if (radius >= 80) {
 			type = SHIP_GONE;
