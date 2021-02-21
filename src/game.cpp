@@ -67,7 +67,7 @@ int main()
 					ship->changeAngle(10);
 				}
 				if (event.key.code == sf::Keyboard::W) {
-					ship->applyThrust();
+					ship->applyThrust(0.2);
 				}
 			}
 		}
@@ -86,7 +86,7 @@ int main()
 			}
 		}
 		if (!objectsInCenter && ship->getType() == SHIP_GONE) {
-			// delete the pointer to avoid a memory leak.
+			// delete the pointer to avoid a memory leak. We're not setting the pointer to NULL, because we set it to a new SpaceObject immediately after.
 			delete ship;
 			ship =  new SpaceObject(
 				SHIP, 

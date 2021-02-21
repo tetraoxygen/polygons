@@ -122,7 +122,7 @@ class SpaceObject {
 		/**
 		*	Adds thrust in the direction that the ship is currently facing. 
 		*/
-		void applyThrust();
+		void applyThrust(double thrustVector);
 		
 		/**
 		*	Sets the ship's type to SHIP_EXPLODING, and sets the ship's velocity to 0.

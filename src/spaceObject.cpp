@@ -143,11 +143,10 @@ void SpaceObject::updatePosition() {
 }
 
 // --------------------------- 
-void SpaceObject::applyThrust() {
+void SpaceObject::applyThrust(double thrustVector) {
 	if (type == SHIP) {
-		double engineThrust = 0.2;
-		double forceX = cos((angleDeg-90)*PI/180) * engineThrust;
-		double forceY = sin((angleDeg-90)*PI/180) * engineThrust;
+		double forceX = cos((angleDeg-90)*PI/180) * thrustVector;
+		double forceY = sin((angleDeg-90)*PI/180) * thrustVector;
 		velocity.x = velocity.x + forceX; 
 		velocity.y = velocity.y + forceY;
 	}
