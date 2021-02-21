@@ -160,11 +160,11 @@ void SpaceObject::explode() {
 
 // --------------------------- 
 void SpaceObject::draw(sf::RenderWindow& win) {
-	if (type==SHIP) {
+	if (type == SHIP) {
 		drawShip(win);
 	} else if (type == SHIP_EXPLODING) {
 		drawExplodingShip(win);
-	} else {
+	} else if (type == ASTEROID){
 		drawAsteroid(win);
 	}
 }
