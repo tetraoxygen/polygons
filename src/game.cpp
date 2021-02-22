@@ -16,6 +16,12 @@
 Point getRandomPosition();
 Point getRandomVelocity();
 
+/**
+*	Gets if two SpaceObjects intersect
+*		@param object1 - the first object to be checked
+*		@param object2 - the second object to be checked
+*		@return true if the objects intersect, false otherwise
+*/
 bool objectsIntersect(SpaceObject *object1, SpaceObject *object2);
 
 int main() {
@@ -122,9 +128,7 @@ int main() {
 					ship->getVelocity(),
 					ship->getAngle()
 				);
-				std::cout << "Photon velocity (before applying thrust): " << photons[i]->getVelocity().x << ", " << photons[i]->getVelocity().y << std::endl;
 				photons[i]->applyThrust(5);
-				std::cout << "Photon velocity (after applying thrust): " << photons[i]->getVelocity().x << ", " << photons[i]->getVelocity().y << std::endl;
 			}
 		}
 		
@@ -172,8 +176,21 @@ int main() {
 			);
 		}
 
+		// Is this a janky solution? Yes. Is there a better way to do it? Not that I can think of. 
+		// Iterate through the photons, then the asteroids, check if both the given torpedo and the given asteroid actually exist, and if they do, check if they're intersecting. If they are, delete both and set them to null pointers.
+		for (int i = 0; i < MAX_PHOTONS; i++) {
+			for (int a = 0; a < MAX_ASTEROIDS; a++) {
+				if (photons[i] && asteroids[a]) {
+					if (objectsIntersect(photons[i], asteroids[a]) == true) {
+						delete photons[i];
+						photons[i] = nullptr;
+						delete asteroids[a];
+						asteroids[a] = nullptr;
+					}
+				}
+			}
+		}
 		
-
 		// Draw new frame
 		window.clear();
 		ship->draw(window);
