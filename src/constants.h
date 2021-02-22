@@ -16,9 +16,9 @@
 // In pixels
 const int WINDOW_WIDTH = 1600;
 const int WINDOW_HEIGHT = 900;
-// In number of objects
 const int MAX_ASTEROIDS = 20;
 const int MAX_PHOTONS = 10;
+const int MAX_PHOTONS_PER_SECOND = 5;
 // In frames (each frame is ~16.67 ms)
 const int PHOTON_LIFESPAN = 100;
 

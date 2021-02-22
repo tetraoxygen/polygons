@@ -10,6 +10,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <chrono>
 #include "spaceObject.cpp"
 #include "constants.h"
 
@@ -24,8 +25,11 @@ Point getRandomVelocity();
 */
 bool objectsIntersect(SpaceObject *object1, SpaceObject *object2);
 
-int main() {
+unsigned long millisecondsSinceEpoch();
 
+int main() {
+	unsigned long photonTimestamp = 0; 
+	
 	// Booleans for simultaneous movement (left/right, thrust, and torpedoes should all work at the same time)
 	bool leftPressed = false;
 	bool rightPressed = false;
@@ -115,20 +119,24 @@ int main() {
 			ship->applyThrust(0.04);
 		}
 		if (firePressed) {
-			int i = 0;
-			while (photons[i] != nullptr) {
-				i++;
-			}
-			// Make sure we're not creating too many photons (that goes into the asteroids[] memory because C+++ isn't memory safe)
-			if (i < MAX_PHOTONS) {
-				photons[i] = new SpaceObject(
-					PHOTON_TORPEDO,
-					2,
-					ship->getPosition(),
-					ship->getVelocity(),
-					ship->getAngle()
-				);
-				photons[i]->applyThrust(5);
+			// Check if a torpedo has been fired too recently
+			if ((millisecondsSinceEpoch() - photonTimestamp) >= (1000 / MAX_PHOTONS_PER_SECOND)) {
+				int i = 0;
+				while (photons[i] != nullptr) {
+					i++;
+				}
+				// Make sure we're not creating too many photons (that goes into the asteroids[] memory because C+++ isn't memory safe)
+				if (i < MAX_PHOTONS && ship->getType() == SHIP) {
+					photons[i] = new SpaceObject(
+						PHOTON_TORPEDO,
+						2,
+						ship->getPosition(),
+						ship->getVelocity(),
+						ship->getAngle()
+					);
+					photons[i]->applyThrust(5);
+					photonTimestamp = millisecondsSinceEpoch();
+				}
 			}
 		}
 		
@@ -277,3 +285,6 @@ bool objectsIntersect(SpaceObject *object1, SpaceObject *object2) {
 	return radiiSum > totalDistance;
 }
 
+unsigned long millisecondsSinceEpoch() {
+	return std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1);
+}
