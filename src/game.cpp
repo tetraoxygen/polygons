@@ -39,7 +39,23 @@ int firstNullMember(SpaceObject* arr[], int maxSize);
 */
 unsigned long millisecondsSinceEpoch();
 
+/**
+*	Blows an asteroid up and removes the attacking photon torpedo
+*		@param photons - the array of photons (SpaceObject*) to delete from
+*		@param asteroids - the array of asteroids (SpaceObject*) to delete from
+*		@param photonIndex - the index (int) of the photon to delete
+*		@param asteroidIndex - the index (int) of the asteroid to delete
+*/
 void blowAsteroidUp(SpaceObject* photons[], SpaceObject* asteroids[], int photonIndex, int asteroidIndex);
+
+/**
+*	Adds an asteroid (SpaceObject) to an array of SpaceObjects in the first available spot (a nullptr)
+*		@param asteroids - the array to add to
+*		@param oldAsteroidIndex - the size of the array
+*		@param velocity - the velocity of the new object
+*		@return the index of the added object (int)
+*/
+int addAsteroid(SpaceObject* asteroids[], int oldAsteroidIndex, Point velocity);
 
 int main() {
 	unsigned long photonTimestamp = 0; 
@@ -324,29 +340,26 @@ void blowAsteroidUp(SpaceObject* photons[], SpaceObject* asteroids[], int photon
 	
 	if (ASTEROID_RADIUS / 4.0 < asteroids[asteroidIndex]->getRadius()) {
 		// Create our first asteroid, then save it to a variable. We'll need that later. 
-		int freeIndex = firstNullMember(asteroids, MAX_ASTEROIDS);
-		if (freeIndex != -1) {
-			asteroids[freeIndex] = new SpaceObject(
-				ASTEROID,
-				asteroids[asteroidIndex]->getRadius() / 2,
-				asteroids[asteroidIndex]->getPosition(),
-				getRandomVelocity(),
-				asteroids[asteroidIndex]->getAngle()
-			);
-		}
+		int freeIndex = addAsteroid(asteroids, asteroidIndex, getRandomVelocity());
 		// Create our second asteroid, and make it identical to the first one, except take its velocity and reverse it. 
-		int secondFreeIndex = firstNullMember(asteroids, MAX_ASTEROIDS);
-		if (secondFreeIndex != -1) {
-			asteroids[secondFreeIndex] = new SpaceObject(
-				ASTEROID,
-				asteroids[asteroidIndex]->getRadius() / 2,
-				asteroids[asteroidIndex]->getPosition(),
-				asteroids[freeIndex]->getVelocity().reverse(),
-				asteroids[asteroidIndex]->getAngle()
-			);
-		}
+		addAsteroid(asteroids, asteroidIndex, asteroids[freeIndex]->getVelocity().reverse());
 	}
 	
 	delete asteroids[asteroidIndex];
 	asteroids[asteroidIndex] = nullptr;
+}
+
+
+int addAsteroid(SpaceObject* asteroids[], int oldAsteroidIndex, Point velocity) {
+	int freeIndex = firstNullMember(asteroids, MAX_ASTEROIDS);
+	if (freeIndex != -1) {
+		asteroids[freeIndex] = new SpaceObject(
+			ASTEROID,
+			asteroids[oldAsteroidIndex]->getRadius() / 2,
+			asteroids[oldAsteroidIndex]->getPosition(),
+			velocity,
+			asteroids[oldAsteroidIndex]->getAngle()
+		);
+	}
+	return freeIndex;
 }
