@@ -25,7 +25,21 @@ Point getRandomVelocity();
 */
 bool objectsIntersect(SpaceObject *object1, SpaceObject *object2);
 
+/**
+*	Returns the index of the first nullptr member of an array of SpaceObject()s
+*		@param arr - the array of SpaceObjects to check for nullptrs
+*		@param maxSize - the size of the array
+*		@return an index if a nullptr can be found in the array, -1 otherwise
+*/
+int firstNullMember(SpaceObject* arr[], int maxSize);
+
+/**
+*	Returns the number of milliseconds since the Unix Epoch
+*		@return current epoch time in milliseconds (unsigned long)
+*/
 unsigned long millisecondsSinceEpoch();
+
+void blowAsteroidUp(SpaceObject* photons[], SpaceObject* asteroids[], int photonIndex, int asteroidIndex);
 
 int main() {
 	unsigned long photonTimestamp = 0; 
@@ -125,7 +139,7 @@ int main() {
 				while (photons[i] != nullptr) {
 					i++;
 				}
-				// Make sure we're not creating too many photons (that goes into the asteroids[] memory because C+++ isn't memory safe)
+				// In addition, make sure we're not creating too many photons (that goes into the asteroids[] memory because C++ isn't memory safe)
 				if (i < MAX_PHOTONS && ship->getType() == SHIP) {
 					photons[i] = new SpaceObject(
 						PHOTON_TORPEDO,
@@ -144,8 +158,10 @@ int main() {
 		ship->updatePosition();
 		
 		bool objectsInCenter = false;
+		
+		// Iterate through the asteroids
 		for (int i = 0; i < MAX_ASTEROIDS; i++) {
-			// check if the asteroid is not null
+			// Check if the asteroid is not null
 			if (asteroids[i]) {
 				asteroids[i]->updatePosition();
 				if (objectsIntersect(asteroids[i], ship) == true && ship->getType() == SHIP) {
@@ -155,10 +171,11 @@ int main() {
 			}
 		}
 		
+		// Iterate through the photons
 		for (int i = 0; i < MAX_PHOTONS; i++) {
-			// check if the photon is not null
+			// Check if the photon is not null
 			if (photons[i]) {
-				// Check if the photon torpedo has reached its end of life, and delete it if it's reached EOL
+				// Check if the photon torpedo has reached its end of life, and if so, delete it
 				if (photons[i]->getTimesDrawn() >= PHOTON_LIFESPAN) {
 					delete photons[i];
 					photons[i] = 0;
@@ -170,9 +187,9 @@ int main() {
 		}
 		
 		if (!objectsInCenter && ship->getType() == SHIP_GONE) {
-			// delete the pointer to avoid a memory leak. We're not setting the pointer to NULL, because we set it to a new SpaceObject immediately after.
+			// Delete the pointer to avoid a memory leak. We're not setting the pointer to NULL, because we set it to a new SpaceObject immediately after.
 			delete ship;
-			ship =  new SpaceObject(
+			ship = new SpaceObject(
 				SHIP, 
 				40, 
 				Point { 
@@ -190,10 +207,7 @@ int main() {
 			for (int a = 0; a < MAX_ASTEROIDS; a++) {
 				if (photons[i] && asteroids[a]) {
 					if (objectsIntersect(photons[i], asteroids[a]) == true) {
-						delete photons[i];
-						photons[i] = nullptr;
-						delete asteroids[a];
-						asteroids[a] = nullptr;
+						blowAsteroidUp(photons, asteroids, i, a);
 					}
 				}
 			}
@@ -285,6 +299,54 @@ bool objectsIntersect(SpaceObject *object1, SpaceObject *object2) {
 	return radiiSum > totalDistance;
 }
 
+// --------------------------- 
+int firstNullMember(SpaceObject* arr[], int maxSize) {
+	int i = 0;
+	while (arr[i] != nullptr) {
+		i++;
+	}
+	if (i > maxSize) {
+		return -1;
+	}
+	return i;
+}
+
+// --------------------------- 
 unsigned long millisecondsSinceEpoch() {
 	return std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1);
+}
+
+// --------------------------- 
+void blowAsteroidUp(SpaceObject* photons[], SpaceObject* asteroids[], int photonIndex, int asteroidIndex) {
+	// Get rid of the photon, we won't be needing it.
+	delete photons[photonIndex];
+	photons[photonIndex] = nullptr;
+	
+	if (ASTEROID_RADIUS / 4.0 < asteroids[asteroidIndex]->getRadius()) {
+		// Create our first asteroid, then save it to a variable. We'll need that later. 
+		int freeIndex = firstNullMember(asteroids, MAX_ASTEROIDS);
+		if (freeIndex != -1) {
+			asteroids[freeIndex] = new SpaceObject(
+				ASTEROID,
+				asteroids[asteroidIndex]->getRadius() / 2,
+				asteroids[asteroidIndex]->getPosition(),
+				getRandomVelocity(),
+				asteroids[asteroidIndex]->getAngle()
+			);
+		}
+		// Create our second asteroid, and make it identical to the first one, except take its velocity and reverse it. 
+		int secondFreeIndex = firstNullMember(asteroids, MAX_ASTEROIDS);
+		if (secondFreeIndex != -1) {
+			asteroids[secondFreeIndex] = new SpaceObject(
+				ASTEROID,
+				asteroids[asteroidIndex]->getRadius() / 2,
+				asteroids[asteroidIndex]->getPosition(),
+				asteroids[freeIndex]->getVelocity().reverse(),
+				asteroids[asteroidIndex]->getAngle()
+			);
+		}
+	}
+	
+	delete asteroids[asteroidIndex];
+	asteroids[asteroidIndex] = nullptr;
 }

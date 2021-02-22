@@ -17,6 +17,12 @@
 struct Point {
 	double x;
 	double y;
+	
+	/**
+	*	Returns a Point with the x-and-y values multiplied by -1, thereby creating a velocity that is exactly 180° off.
+	*		@return a Point with the values reversed
+	*/
+	Point reverse();
 };
 
 enum SpaceObjType { SHIP, ASTEROID, PHOTON_TORPEDO, SHIP_EXPLODING, SHIP_GONE }; 

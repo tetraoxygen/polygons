@@ -285,3 +285,11 @@ void SpaceObject::drawExplodingShip(sf::RenderWindow& win) {
 		}
 	}
 }
+
+// --------------------------- 
+Point Point::reverse() {
+	return Point {
+		.x = this->x * -1,
+		.y = this->y * -1
+	};
+}

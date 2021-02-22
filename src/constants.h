@@ -16,6 +16,7 @@
 // In pixels
 const int WINDOW_WIDTH = 1600;
 const int WINDOW_HEIGHT = 900;
+const int ASTEROID_RADIUS = 60;
 const int MAX_ASTEROIDS = 20;
 const int MAX_PHOTONS = 10;
 const int MAX_PHOTONS_PER_SECOND = 5;
